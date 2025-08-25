@@ -1,24 +1,87 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>JavaScript Example</title>
+    <title>JARVIS AI Assistant</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f0f0f0;
+        }
+        #jarvis-output {
+            width: 80%;
+            margin: 40px auto;
+            padding: 20px;
+            border: 1px solid #ccc;
+            border-radius: 10px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
+    </style>
 </head>
 <body>
-    <h1 id="header"></h1>
+    <h1>JARVIS AI Assistant</h1>
+    <div id="jarvis-output"></div>
+    <button id="start-button">Start</button>
     <script>
-        document.getElementById("header").innerHTML = "Hello, World!";
+        const startButton = document.getElementById('start-button');
+        const jarvisOutput = document.getElementById('jarvis-output');
+        const synth = window.speechSynthesis;
+
+        startButton.addEventListener('click', () => {
+            startButton.disabled = true;
+            startButton.textContent = 'Listening...';
+            startSpeechRecognition();
+        });
+
+        function startSpeechRecognition() {
+            const recognition = new webkitSpeechRecognition() || new SpeechRecognition();
+            recognition.maxResults = 10;
+            recognition.onresult = event => {
+                const transcript = event.results[0][0].transcript;
+                jarvisOutput.textContent = `You said: ${transcript}`;
+                processCommand(transcript);
+            };
+            recognition.onerror = event => {
+                console.error('Error occurred:', event);
+            };
+            recognition.onend = () => {
+                startButton.disabled = false;
+                startButton.textContent = 'Start';
+            };
+            recognition.start();
+        }
+
+        function processCommand(command) {
+            // Simple command processing
+            if (command.toLowerCase().includes('hello')) {
+                jarvisOutput.textContent = 'Hello, Sir!';
+                speakText('Hello, Sir!');
+            } else if (command.toLowerCase().includes('time')) {
+                const currentTime = new Date().toLocaleTimeString();
+                jarvisOutput.textContent = `The current time is ${currentTime}`;
+                speakText(`The current time is ${currentTime}`);
+            } else if (command.toLowerCase().includes('date')) {
+                const currentDate = new Date().toLocaleDateString();
+                jarvisOutput.textContent = `Today's date is ${currentDate}`;
+                speakText(`Today's date is ${currentDate}`);
+            } else if (command.toLowerCase().includes('what is your name')) {
+                jarvisOutput.textContent = 'My name is JARVIS';
+                speakText('My name is JARVIS');
+            } else if (command.toLowerCase().includes('exit')) {
+                jarvisOutput.textContent = 'Goodbye, Sir!';
+                speakText('Goodbye, Sir!');
+            } else {
+                jarvisOutput.textContent = 'Unknown command. Please try again!';
+                speakText('Unknown command. Please try again!');
+            }
+        }
+
+        function speakText(text) {
+            if (synth.speaking) {
+                synth.cancel();
+            }
+            const utterance = new SpeechSynthesisUtterance(text);
+            synth.speak(utterance);
+        }
     </script>
 </body>
 </html>
-import javax.servlet.*;
-import java.io.*;
-
-public class HelloWorldServlet extends HttpServlet {
-    public void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-        response.setContentType("text/html");
-        PrintWriter out = response.getWriter();
-        out.println("<html><body>");
-        out.println("<h1>Hello, World!</h1>");
-        out.println("</body></html>");
-    }
-}'
